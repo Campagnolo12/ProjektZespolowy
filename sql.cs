@@ -24,24 +24,28 @@ namespace sql_test
             czytnik.Close();
            // komendaSQL.Cancel();
         }
-        static void pobierz_plansze(List<Pola> plansza, SqlConnection pol){
+        static void pobierz_plansze(ref List<Pola> plansza, SqlConnection pol){
             SqlCommand komendaSQL = pol.CreateCommand();
-            komendaSQL.CommandText = "SELECT * FROM Pola";
+            komendaSQL.CommandText = "SELECT nazwa, ilosc_domkow,koszt_usługi,koszt_zakupu,koszt_domka,mnoznik,wlasciciel FROM Pola;";
             SqlDataReader czytnik = komendaSQL.ExecuteReader();
-            Pola temp=new Pola();
+            Pola temp = new Pola();
             while (czytnik.Read()){
-
-                //  temp.edit(czytnik["nazwa"].ToString(),czytnik["ilosc_domkow"],czytnik["koszt_uslugi"],czytnik["koszt_zakupu"],czytnik["koszt_domkow"],czytnik["mnoznik"],czytnik["wlasciciel"]);
-                  temp.edit(czytnik["nazwa"].ToString(),czytnik.GetInt16(0), czytnik.GetInt16(0), czytnik.GetInt16(0), czytnik.GetInt16(0), czytnik.GetInt16(0), czytnik.GetInt16(0));
+               
+                  temp.edit(czytnik["nazwa"].ToString(),czytnik.GetInt16(1), czytnik.GetInt16(2), czytnik.GetInt16(3), czytnik.GetInt16(4), czytnik.GetInt16(5), czytnik.GetInt16(6));
                 temp.wypisz();
+               
+                plansza.Add(temp);
+
             }
+
+            czytnik.Close();
         }
 
         static int oczekanko(SqlConnection pol)
         {
             int a = 123;
             SqlCommand komenda = pol.CreateCommand();
-             komenda.CommandText = "select tura_gracza from Gra_01 where id_gracza=1;";
+           komenda.CommandText = "select tura_gracza from Gra_01 where id_gracza=1;";
             while (a != 1){
                 SqlDataReader czytnik = komenda.ExecuteReader();
                 czytnik.Read();
@@ -67,8 +71,8 @@ namespace sql_test
                 SqlConnection polaczenie = new SqlConnection("Server=projektasd.database.windows.net;DATABASE=monopol;User ID=master;Password=Krowa123!;");
                 polaczenie.Open();
                 //ta funkcja jeszcze nie działa 
-               // pobierz_plansze(plansza, polaczenie);
-      
+                pobierz_plansze(ref plansza, polaczenie);
+   
                 wypisz(polaczenie);
 
                 //funkcja sprawdzajaca ture 
