@@ -13,12 +13,12 @@ namespace sql_test
         int koszt_uslugi;
         int koszt_zakupu;
         int koszt_domkow;
-        float mnoznik;
+        int mnoznik;
         int wlasciciel;
         public Pola() {
             ilosc_domkow = 0;
         }
-        public void edit( string nnazwa, int nilosc_domkow, int nkoszt_uslugi, int nkoszt_zakupu, int nkoszt_domkow, float nmnoznik, int nwlasciciel)
+        public void edit( string nnazwa, int nilosc_domkow, int nkoszt_uslugi, int nkoszt_zakupu, int nkoszt_domkow, int nmnoznik, int nwlasciciel)
         {
             nazwa = nnazwa;
             ilosc_domkow = nilosc_domkow;
