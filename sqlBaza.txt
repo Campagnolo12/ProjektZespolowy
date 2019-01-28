@@ -1,0 +1,63 @@
+CREATE DATABASE Monopol;
+
+CREATE TABLE Pola (
+id_pola INT IDENTITY(1,1) PRIMARY KEY NOT NULL, 
+nazwa varchar(20) NOT NULL, 
+ilosc_domkow SMALLINT,
+koszt_us³ugi0 SMALLINT, 
+koszt_us³ugi1 SMALLINT,
+koszt_us³ugi2 SMALLINT,
+koszt_us³ugi3 SMALLINT,
+koszt_us³ugi4 SMALLINT,
+koszt_zakupu SMALLINT,
+koszt_domka SMALLINT,
+wlasciciel SMALLINT,
+typ_pola varchar(20),
+);
+
+CREATE TABLE Gra_01(
+id_gracza INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
+nazwa varchar(20) NOT NULL, 
+hajs INT NOT NULL,
+aktualne_pole SMALLINT,
+tura_gracza SMALLINT,
+gracz_online SMALLINT
+);
+
+CREATE TABLE Rzut_kostka (
+id_rzutu INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
+int wartosc INT
+);
+
+CREATE TABLE Ryzyko(
+id_ryzyka INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
+tresc VARCHAR(100),
+kwota SMALLINT);
+
+INSERT INTO Rzut_kostka (wartosc) VALUES (0);
+
+INSERT INTO Gra_01 (nazwa,hajs,aktualne_pole,tura_gracza,gracz_online) VALUES ('Daman',1100,0,1,1);
+INSERT INTO Gra_01 (nazwa,hajs,aktualne_pole,tura_gracza,gracz_online) VALUES ('Smok',1100,0,0,1);
+
+INSERT INTO Ryzyko(tresc,kwota) VALUES ('podatek od wszystkiego zaplac 100',-100);
+INSERT INTO Ryzyko(tresc,kwota) VALUES ('spadek po dziadku dostajesz 200',200);
+INSERT INTO Ryzyko(tresc,kwota) VALUES ('mandat za szybka jazde zaplac 300',-300);
+INSERT INTO Ryzyko(tresc,kwota) VALUES ('wygrywasz w loteri dostajesz 400',400);
+
+
+INSERT INTO Pola (nazwa,ilosc_domkow,koszt_domka,koszt_us³ugi0,koszt_us³ugi1,koszt_us³ugi2,koszt_us³ugi3,koszt_us³ugi4,koszt_zakupu,wlasciciel,typ_pola) values ('START',0,0,0,0,0,0,0,0,0,'start');
+INSERT INTO Pola (nazwa,ilosc_domkow,koszt_domka,koszt_us³ugi0,koszt_us³ugi1,koszt_us³ugi2,koszt_us³ugi3,koszt_us³ugi4,koszt_zakupu,wlasciciel,typ_pola) values ('Krakow',0,10,11,12,13,14,15,100,0,'dzialka');
+INSERT INTO Pola (nazwa,ilosc_domkow,koszt_domka,koszt_us³ugi0,koszt_us³ugi1,koszt_us³ugi2,koszt_us³ugi3,koszt_us³ugi4,koszt_zakupu,wlasciciel,typ_pola) values ('Rzeszow',0,10,12,13,14,15,16,120,0,'dzialka');
+INSERT INTO Pola (nazwa,ilosc_domkow,koszt_domka,koszt_us³ugi0,koszt_us³ugi1,koszt_us³ugi2,koszt_us³ugi3,koszt_us³ugi4,koszt_zakupu,wlasciciel,typ_pola) values ('Warszawa',0,10,15,16,17,18,19,150,0,'dzialka');
+INSERT INTO Pola (nazwa,ilosc_domkow,koszt_domka,koszt_us³ugi0,koszt_us³ugi1,koszt_us³ugi2,koszt_us³ugi3,koszt_us³ugi4,koszt_zakupu,wlasciciel,typ_pola) values ('Wiezienie',0,0,0,0,0,0,0,0,0,'wiezienie');
+INSERT INTO Pola (nazwa,ilosc_domkow,koszt_domka,koszt_us³ugi0,koszt_us³ugi1,koszt_us³ugi2,koszt_us³ugi3,koszt_us³ugi4,koszt_zakupu,wlasciciel,typ_pola) values ('Berlin',0,20,20,21,22,23,24,210,0,'dzialka');
+INSERT INTO Pola (nazwa,ilosc_domkow,koszt_domka,koszt_us³ugi0,koszt_us³ugi1,koszt_us³ugi2,koszt_us³ugi3,koszt_us³ugi4,koszt_zakupu,wlasciciel,typ_pola) values ('Monachium',0,20,25,26,27,28,29,250,0,'dzialka');
+INSERT INTO Pola (nazwa,ilosc_domkow,koszt_domka,koszt_us³ugi0,koszt_us³ugi1,koszt_us³ugi2,koszt_us³ugi3,koszt_us³ugi4,koszt_zakupu,wlasciciel,typ_pola) values ('Kolonia',0,20,29,30,31,35,40,270,0,'dzialka');
+INSERT INTO Pola (nazwa,ilosc_domkow,koszt_domka,koszt_us³ugi0,koszt_us³ugi1,koszt_us³ugi2,koszt_us³ugi3,koszt_us³ugi4,koszt_zakupu,wlasciciel,typ_pola) values ('Idziesz_do_wiezeinia',0,0,0,0,0,0,0,0,0,'idziesz_do_wiezienia');
+INSERT INTO Pola (nazwa,ilosc_domkow,koszt_domka,koszt_us³ugi0,koszt_us³ugi1,koszt_us³ugi2,koszt_us³ugi3,koszt_us³ugi4,koszt_zakupu,wlasciciel,typ_pola) values ('Dla_odwiedzajacych',0,0,0,0,0,0,0,0,0,'dla_odwiedzajacych');
+INSERT INTO Pola (nazwa,ilosc_domkow,koszt_domka,koszt_us³ugi0,koszt_us³ugi1,koszt_us³ugi2,koszt_us³ugi3,koszt_us³ugi4,koszt_zakupu,wlasciciel,typ_pola) values ('Szansa',0,0,0,0,0,0,0,0,0,'szansa');
+INSERT INTO Pola (nazwa,ilosc_domkow,koszt_domka,koszt_us³ugi0,koszt_us³ugi1,koszt_us³ugi2,koszt_us³ugi3,koszt_us³ugi4,koszt_zakupu,wlasciciel,typ_pola) values ('Ryzyko',0,0,0,0,0,0,0,0,0,'ryzyko');
+
+
+Select*from Pola;
+

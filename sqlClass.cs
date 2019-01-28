@@ -31,13 +31,14 @@ namespace Projekt_zespolowy
             SqlCommand komenda = polaczenie.CreateCommand();
             komenda.CommandText = "SELECT hajs FROM " + nazwa_gry + " WHERE tura_gracza=1";
             SqlDataReader czytnik = komenda.ExecuteReader();
-            hajs = czytnik.GetInt16(0);
+            czytnik.Read();
+            hajs = czytnik.GetInt32(0);
             hajs = hajs + kwota;
             czytnik.Close();
 
             // # zmian ilości kasy 
 
-            komenda.CommandText = "UPDATE "+nazwa_gry+"SET hajs="+hajs+" WHERE tura_gracza=1" ;
+            komenda.CommandText = "UPDATE "+nazwa_gry+" SET hajs="+hajs+" WHERE tura_gracza=1" ;
             komenda.ExecuteNonQuery();
 
         }
@@ -48,23 +49,49 @@ namespace Projekt_zespolowy
             SqlCommand komenda = polaczenie.CreateCommand();
             komenda.CommandText = "SELECT hajs FROM " + nazwa_gry + " WHERE tura_gracza=1";
             SqlDataReader czytnik = komenda.ExecuteReader();
-            hajs = czytnik.GetInt16(0);
+            czytnik.Read();
+            hajs = czytnik.GetInt32(0);
             hajs = hajs - kwota;
             czytnik.Close();
-            komenda.CommandText = "UPDATE " + nazwa_gry + "SET hajs=" + hajs + " WHERE tura_gracza=1";
+            komenda.CommandText = "UPDATE " + nazwa_gry + " SET hajs=" + hajs + " WHERE tura_gracza=1";
             komenda.ExecuteNonQuery();
 
             // # Przekazanie kasy graczowi 
             komenda = polaczenie.CreateCommand();
             komenda.CommandText = "SELECT hajs FROM " + nazwa_gry + " WHERE tura_gracza=0";
             czytnik = komenda.ExecuteReader();
-            hajs = czytnik.GetInt16(0);
+            czytnik.Read();
+            hajs = czytnik.GetInt32(0);
             hajs = hajs + kwota;
             czytnik.Close();
-            komenda.CommandText = "UPDATE " + nazwa_gry + "SET hajs=" + hajs + " WHERE tura_gracza=0";
+            komenda.CommandText = "UPDATE " + nazwa_gry + " SET hajs=" + hajs + " WHERE tura_gracza=0";
             komenda.ExecuteNonQuery();
         }
+        public int pokaz_kase()
+        {
+            int hajs;
+            SqlCommand komenda = polaczenie.CreateCommand();
+            //  komenda.CommandText = "SELECT hajs FROM " + nazwa_gry + " WHERE tura_gracza=1";
+            komenda.CommandText = "SELECT hajs FROM Gra_01 WHERE tura_gracza=1;";
+            SqlDataReader czytnik = komenda.ExecuteReader();
+            czytnik.Read();
+            hajs = czytnik.GetInt32(0);
+            czytnik.Close();
+            return hajs;
+        }
 
+        public string pobierz_nazwe_pola(int id_pola)
+        {
+            string nazwa;
+            SqlCommand komenda = polaczenie.CreateCommand();
+            komenda.CommandText = "SELECT nazwa FROM Pola WHERE id_pola=" + id_pola + ";";
+            SqlDataReader czytnik = komenda.ExecuteReader();
+            czytnik.Read();
+            nazwa = czytnik.GetString(0);
+            czytnik.Close();
+            return nazwa;
+
+        }
         static void wypisz(ref SqlConnection pol)
         {
             SqlCommand komendaSQL = pol.CreateCommand();
@@ -131,6 +158,7 @@ namespace Projekt_zespolowy
             // # kod do zmiany położenia pionka gracza na planszy
             komenda.CommandText = "SELECT aktualne_pole FROM "+nazwa_gry+" WHERE tura_gracza=1;";
             SqlDataReader czytnik = komenda.ExecuteReader();
+            czytnik.Read();
             int a = czytnik.GetInt16(0);
             a = (a + rzut)%41;
             if (a == 0)
@@ -148,6 +176,7 @@ namespace Projekt_zespolowy
             SqlCommand komenda = polaczenie.CreateCommand();
             komenda.CommandText = "SELECT wartosc From rzut-kostka;";
             SqlDataReader czytnik = komenda.ExecuteReader();
+            czytnik.Read();
             int a = czytnik.GetInt16(0);
             czytnik.Close();
             return a;
@@ -160,15 +189,20 @@ namespace Projekt_zespolowy
             SqlCommand komenda = polaczenie.CreateCommand();
             komenda.CommandText="SELCET typ_pola FROM Pola WHERE id_pola="+id_pola+";";
             SqlDataReader czytnik = komenda.ExecuteReader();
+            czytnik.Read();
             temp = czytnik.GetString(0);
+            czytnik.Close();
             
             switch (temp)
             {
                 case "dzialka":
+                    ruchDzialka(id_pola);
                     break;
                 case "kolej":
+                    ruchKolej(id_pola);
                     break;
                 case "ryzyko":
+                    ruchRyzyko();
                     break;
                 case "wiezienie":
                     break;
@@ -200,6 +234,7 @@ namespace Projekt_zespolowy
             SqlCommand komenda = polaczenie.CreateCommand();
             komenda.CommandText = "SELECT wlasciciel From Pola WHERE id_pola="+id_pola+";";
             SqlDataReader czytnik = komenda.ExecuteReader();
+            czytnik.Read();
             id_wlasciciela_pola = czytnik.GetInt16(0);
             czytnik.Close();
             // pobierz Z BAZY do kogo nalezy pole
@@ -210,6 +245,7 @@ namespace Projekt_zespolowy
                 {
                     komenda.CommandText = "SELECT id_gracza FROM " + nazwa_gry + " WHERE tura_gracza=1";
                     czytnik = komenda.ExecuteReader();
+                    czytnik.Read();
                     id_wlasciciela_pola = czytnik.GetInt16(0);
                     czytnik.Close();
 
@@ -222,6 +258,7 @@ namespace Projekt_zespolowy
                 // pobierz id gracza który ma ruch
                 komenda.CommandText = "SELECT id_gracza FROM " + nazwa_gry + " WHERE tura_gracza=1";
                 czytnik = komenda.ExecuteReader();
+                czytnik.Read();
                 int id_aktualnego_gracza = czytnik.GetInt16(0);
                 czytnik.Close();
                
@@ -231,13 +268,14 @@ namespace Projekt_zespolowy
                     //  pobranie ile aktualnie jest domkow na polu
                     komenda.CommandText = "SELECT ilosc_domkow FROM Pola WHERE id_pola=" + id_pola + ";";
                     czytnik = komenda.ExecuteReader();
-                    czytnik.Close();
+                    czytnik.Read();
                     int ilosc_domkow = czytnik.GetInt16(0);
                     if (ilosc_domkow < 4) //kupno domaka jest mozliwe
                     {
                        //pobranie ile kosztuje domek 
                         komenda.CommandText = "SELECT koszt_domka FROM pola WHERE id_pola=" + id_pola + ";";
                         czytnik = komenda.ExecuteReader();
+                        czytnik.Read();
                         int koszt = czytnik.GetInt16(0);
                         zmiana_kasy(koszt);
                         ilosc_domkow++;
@@ -246,21 +284,26 @@ namespace Projekt_zespolowy
                         // aktualizacja ilosci domkow
                         komenda.CommandText = "UPDATE Pola SET ilosc_domkow="+ilosc_domkow+" WHERE id_pola=" + id_pola + ";";
                     }
+                    czytnik.Close();
                 }
                 else
                 {
                     //  pobranie ile aktualnie jest domkow na polu
                     komenda.CommandText = "SELECT ilosc_domkow FROM Pola WHERE id_pola=" + id_pola + ";";
                     czytnik = komenda.ExecuteReader();
+                    czytnik.Read();
                     czytnik.Close();
                     int ilosc_domkow = czytnik.GetInt16(0);
+                    czytnik.Close();
 
                     // pobierz Z BAZY koszt naruszenia nieruchomosci
                     komenda.CommandText = "SELECT koszt_uslugi"+ilosc_domkow+" FROM Pola WHERE id_pola=" + id_pola + ";";
                     czytnik = komenda.ExecuteReader();
+                    czytnik.Close();
                     int koszt = czytnik.GetInt16(0);
                     // aktualizuj BAZE: transferuj pieniadze
                     transfer_kasy(koszt);
+                    czytnik.Close();
                 }
             }
         }
@@ -273,6 +316,7 @@ namespace Projekt_zespolowy
             SqlCommand komenda = polaczenie.CreateCommand();
             komenda.CommandText = "SELECT wlasciciel From Pola WHERE id_pola=" + id_pola + ";";
             SqlDataReader czytnik = komenda.ExecuteReader();
+            czytnik.Read();
             id_wlasciciela_pola = czytnik.GetInt16(0);
             czytnik.Close();
             if (/*jest niczyje*/id_wlasciciela_pola==0)
@@ -283,6 +327,7 @@ namespace Projekt_zespolowy
                     // aktualizuj BAZE 
                     komenda.CommandText = "SELECT id_gracza FROM " + nazwa_gry + " WHERE tura_gracza=1";
                     czytnik = komenda.ExecuteReader();
+                    czytnik.Read();
                     id_wlasciciela_pola = czytnik.GetInt16(0);
                     czytnik.Close();
 
@@ -296,6 +341,7 @@ namespace Projekt_zespolowy
                 // pobierz id gracza który ma ruch
                 komenda.CommandText = "SELECT id_gracza FROM " + nazwa_gry + " WHERE tura_gracza=1";
                 czytnik = komenda.ExecuteReader();
+                czytnik.Read();
                 int id_aktualnego_gracza = czytnik.GetInt16(0);
                 czytnik.Close();
                 if (id_wlasciciela_pola == id_aktualnego_gracza)
@@ -308,12 +354,14 @@ namespace Projekt_zespolowy
                     // pobranie ile koleij ma ich wlasciciel
                     komenda.CommandText = "SELECT COUNT(*) FROM Pola WHERE typ_pola='kolej' AND wlasciciel="+id_wlasciciela_pola+";";
                     czytnik = komenda.ExecuteReader();
+                    czytnik.Read();
                     int ilosc_koleji = czytnik.GetInt32(0);
                     czytnik.Close();
 
                     // pobierz Z BAZY koszt naruszenia nieruchomosci
                     komenda.CommandText = "SELECT koszt_uslugi" + ilosc_koleji + " FROM Pola WHERE id_pola=" + id_pola + ";";
                     czytnik = komenda.ExecuteReader();
+                    czytnik.Read();
                     int koszt = czytnik.GetInt16(0);
                     // aktualizuj BAZE: transferuj pieniadze
                     transfer_kasy(koszt);
@@ -323,16 +371,28 @@ namespace Projekt_zespolowy
 
         public void ruchRyzyko()
         {
-            string t = "";
-            // pobierz Z BAZY tresc ryzyka (trzeba zrobic baze ryzyka)
-            switch (t /* typ ryzka */)
-            {
-                case "b":
-                    break;
-                case "a":
-                    break;
-            }
-            // (tu będzie dużo różnych zmian w bazie)
+
+            Random rnd = new Random();
+            int a = rnd.Next(1, 5);
+            SqlCommand komenda = polaczenie.CreateCommand();
+            komenda.CommandText = "SELECT kwota From Ryzyko WHERE id_ryzuka=" + a + ";";
+            SqlDataReader czytnik = komenda.ExecuteReader();
+            czytnik.Read();
+            int kwota = czytnik.GetInt16(0);
+            czytnik.Close();
+            zmiana_kasy(kwota);
+            string temp = pobierz_tekst_ryzyka(a);
+
+        }
+        public string pobierz_tekst_ryzyka(int a)
+        {
+            SqlCommand komenda = polaczenie.CreateCommand();
+            komenda.CommandText = "SELECT tresc From Ryzyko WHERE id_ryzuka=" + a + ";";
+            SqlDataReader czytnik = komenda.ExecuteReader();
+            czytnik.Read();
+            string temp= czytnik.GetString(0);
+            czytnik.Close();
+            return temp;
         }
 
         public void ruchIdzieszDoWiezienia()
@@ -374,48 +434,5 @@ namespace Projekt_zespolowy
         {
 
         }
-
-
-
-
-
-
-
-        public void main()
-        {
-            List<Pola> plansza = new List<Pola>();
-
-            try
-            {
-                // dane do połaczenia z baza danych
-                //SqlConnection polaczenie = new SqlConnection("Server=projektasd.database.windows.net;DATABASE=monopol;User ID=master;Password=Krowa123!;");
-                //polaczenie.Open();
-
-                // ta funkcja jeszcze nie działa 
-               // pobierz_plansze(plansza, polaczenie);
-
-                //wypisz(ref polaczenie);
-
-                //funkcja sprawdzajaca ture 
-                //oczekanko(polaczenie);
-
-
-                //polaczenie.Close();
-
-                //Console.ReadKey();
-            }
-            catch (SqlException e)
-            {
-                Console.WriteLine("Wystąpił nieoczekiwany błąd!");
-                Console.WriteLine(e.Message);
-               // Console.ReadKey();
-            }
-
-
-
-        }
-
-
-
     }
 }
